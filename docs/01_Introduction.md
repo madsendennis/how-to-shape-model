@@ -70,8 +70,8 @@ A simple way to explain this, is that we choose 1 reference mesh and we then fin
 
 Each of the meshes in the dataset will in other words get the same point structure as the reference mesh, which is why it might be a good idea to not just choosing a random mesh.
 
-For this video series, we will use a shape dataset of vertices from the vertebrae segmentation challenge at MICCAI (VerSe: Large Scale Vertebrae Segmentation Challenge 2020):
-https://github.com/anjany/verse . For simplicity I've already extracted the mesh from 10 of the segmentation masks and added those to my repository which I have linked in the description.
+For this video series, we will use a shape dataset of vertices from the vertebrae segmentation challenge at [MICCAI (VerSe: Large Scale Vertebrae Segmentation Challenge 2020)](
+https://github.com/anjany/verse). For simplicity I've already extracted the mesh from 10 of the segmentation masks and added those to my repository which I have linked in the description.
 
 So, in the following videos we will go over:
 
