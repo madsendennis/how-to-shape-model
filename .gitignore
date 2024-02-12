@@ -1,5 +1,7 @@
 .DS_Store
 
+data/vertebrae/aligned/*
+
 out/
 .bloop/
 .metals/
