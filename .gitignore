@@ -1,6 +1,8 @@
 .DS_Store
 
 data/vertebrae/aligned/*
+data/vertebrae/registered/*
+data/vertebrae/*.h5.json
 
 out/
 .bloop/

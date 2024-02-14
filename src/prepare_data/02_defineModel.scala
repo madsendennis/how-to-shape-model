@@ -25,15 +25,11 @@ import scalismo.io.StatisticalModelIO
 import scalismo.statisticalmodel.PointDistributionModel
 
 def createModel(ref: TriangleMesh[_3D]): PointDistributionModel[_3D, TriangleMesh] =
-    val scalingCoarse = 50.0
-    val sigmaCoarse = 35.0
-    val scalingFine = scalingCoarse/4.0
-    val sigmaFine = sigmaCoarse/4.0
+    val scaling = 50.0
+    val sigma = 35.0
     val relativeTolerance = 0.01
 
-    val kernelCoarse = GaussianKernel[_3D](sigmaCoarse) * scalingCoarse
-    val kernelFine = GaussianKernel[_3D](sigmaFine) * scalingFine
-    val kernel = kernelCoarse + kernelFine
+    val kernel = GaussianKernel[_3D](sigma) * scaling
     val gp = GaussianProcess3D[EuclideanVector[_3D]](DiagonalKernel(kernel, 3))
     val lrGP = LowRankGaussianProcess.approximateGPCholesky(ref, gp, relativeTolerance, interpolator = NearestNeighborInterpolator3D())
     val gpmm = PointDistributionModel3D(ref, lrGP)

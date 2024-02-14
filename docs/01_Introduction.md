@@ -25,8 +25,8 @@ Then execute `scala-cli ide-setup .` to configure the folder you are in to be a 
 To begin with, we specify the Scala version to use and the scalismo library. 
 
 ```scala
-// Scala3
-// Scalismo-ui:1.0.0
+//> using scala "3.3"
+//> using dep "ch.unibas.cs.gravis::scalismo:1.0.0"
 ```
 
 We will use the newer Scala 3 format and stick to the new python like styling with indentation instead of curly brackets.. 
