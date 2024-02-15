@@ -40,10 +40,10 @@ Now, let’s load in the data. The data is stored in a folder in .PLY format. We
 ```scala
     val dataDir = new File("data/vertebrae/")
     val dataFolder = new File(dataDir, "registered")
-    val registeredMeshes = dataFolder.listFiles().filter(_.getName.endsWith(".ply")).map(MeshIO.readMesh(_).get).toIndexedSeq
-    val ref = registeredMeshes.head
+    val meshes = dataFolder.listFiles().filter(_.getName.endsWith(".ply")).map(MeshIO.readMesh(_).get).toIndexedSeq
+    val ref = meshes.head
 
-    val dataCollection = DataCollection.fromTriangleMesh3DSequence(ref, registeredMeshes)
+    val dataCollection = DataCollection.fromTriangleMesh3DSequence(ref, meshes)
     val ssm = PointDistributionModel.createUsingPCA(dataCollection)
     val ui = ScalismoUI()
     ui.show(ssm, "ssm")
@@ -53,41 +53,55 @@ And that’s basically all there is to it.
 Now you might ask why I would need a whole video series to explain this simple method that only takes up a few lines of code.
 The reason for this is the requirement that these meshes need to be in point-correspondence with one another. Before explaining this phenomena, let’s try to build a model from meshes that are not in point-correspondence.
 
-Instead of using the registered folder, let's instead use the aligned folder.
+Instead of using the registered folder, let's instead use the aligned folder. And let's also print out the number of vertices in each mesh:
 
 ```scala
     ... 
     val dataFolder = new File(dir, "aligned")
+    meshes.foreach(_.pointSet.numberOfPoints)
     ... 
 ```
 
-If we are lucky to compute the model, we might end up with such a model, where the deformations makes little to no sense.
+If we are lucky to compute the model, we will end up with such a model, where the deformations makes little to no sense.
 Alternatively, you might get an error regarding the number of points in the meshes that were used. This will happen in the meshes in the dataset has fewer points than the reference mesh.
+
+By printing out the number of points in each mesh, we clearly see that each mesh has a different number of points.
 
 Let’s have a closer look at our meshes. For this, let’s visualize the same point ID on all the meshes in our dataset. In the dataset that works, we see that the same point ID corresponds to the same anatomical point on all the meshes.
 
 ```scala
-val pId = PointId(0)
-val lms = meshes.map{m =>
-  Landmark3D(id="id0", m1.PointSet.Point(pId))
-}
-ui.show(lms, "lms")
+    val dataDir = new File("data/vertebrae/")
+    val dataFolder = new File(dataDir, "aligned")
+
+    val ui = ScalismoUI()
+    val pointId = PointId(1000)
+
+    dataFolder.listFiles().filter(_.getName.endsWith(".ply")).foreach { f =>
+        val mesh = MeshIO.readMesh(f).get
+        val lm = Seq(Landmark3D(f.getName, mesh.pointSet.point(pointId)))
+        ui.show(mesh, f.getName)    
+        ui.show(lm, "landmarks")    
+    } 
 ```
 
-If we do the same for the other meshes, we see that this isn’t the case.
+If we do the same for the `registered` meshes, we see that this isn’t the case.
 
-Let’s look at a simple case of 3 hands. What the shape model contains is essentially the mean position and variance for each point in the mesh - and of cause the covariance to neighbouring points. So in the case of the hands, we will find the mean hand size as well as the variability at each point, here specified with a gray ellipsis.
+Let’s look at a simple case of 3 hands that I've just drawn up by hand. What the shape model contains is essentially the mean position and variance for each point in the mesh - and of cause the covariance to neighbouring points. So in the case of the hands, we will find the mean hand size as well as the variability at each point. The corresponding points are here visualized with colors, so the same point color is located at the same anatomical point on each hand.
+
+![Hands Dataset!](/img/hands/hands_correspondence.png)
 
 When meshes are extracted from images e.g. by using the marching cubes algorithm or by scanning an object, they will not by default be in point-correspondence. They will rarely have the same number of points. For this, we can perform non-rigid registration between a reference mesh and all the meshes in our dataset to obtain this property. This is also often referred to as fitting.
 
-A simple way to explain this, is that we choose 1 reference mesh and we then find a deformation field that deforms the reference mesh to approximate each of the meshes in the dataset as visualized here. 
+A simple way to explain this, is that we choose 1 reference mesh and we then find a deformation field that deforms the reference mesh to approximate each of the meshes in the dataset. As an example, we can overlay two hands and show the deformation needed to warp one hand into the other hand on the 10 given points.
 
-<!-- <Visual slide from thesis - wrapping mesh around target> -->
+![Hands Dataset!](/img/hands/hands_deformations.png)
 
-Each of the meshes in the dataset will in other words get the same point structure as the reference mesh, which is why it might be a good idea to not just choosing a random mesh.
+Each of the meshes in the dataset will in other words get the same point structure as the reference mesh, which is why it is important to choose a good reference mesh.
 
 For this video series, we will use a shape dataset of vertices from the vertebrae segmentation challenge at [MICCAI (VerSe: Large Scale Vertebrae Segmentation Challenge 2020)](
 https://github.com/anjany/verse). For simplicity I've already extracted the mesh from 10 of the segmentation masks and added those to my repository which I have linked in the description.
+
+To run all of the examples shown in this and future videos, you just need to execute all the scala scripts in the `prepare_data` folder one by one. 
 
 So, in the following videos we will go over:
 
@@ -95,10 +109,12 @@ So, in the following videos we will go over:
 2. How to rigidly align the mesh data to simplify the non-rigid registration.
 3. How to choose the space of possible deformations that the reference mesh can undergo.
 4. How to manually code up a simple non-rigid registration algorithm.
-5. How to perform non-rigid registration with different registration algorithms using the GiNGR algorithm. 
-6. How to evaluate and compare statistical shape models
-7. How to visualize statistical shape models
+5. How to perform non-rigid registration with different registration algorithms using the GiNGR framework. 
+
+And then extra videos, not specifically on building models are
+
+6. How to evaluate and compare shape models
+7. Different ways to visualize statistical shape models
    
-With the [GiNGR](https://github.com/unibas-gravis/GiNGR) framework, I’ll also show how to do simple multi-resolution fitting which enables very fast and precise registrations.
-That was all for this video. Remember to give the video a like, comment below with your own shape model project and of course subscribe to the channel for more content like this.
-See you in the next video!
+<!-- That was all for this video. Remember to give the video a like, comment below with your own shape model project and of course subscribe to the channel for more content like this.
+See you in the next video! -->

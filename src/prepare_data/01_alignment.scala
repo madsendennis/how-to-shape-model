@@ -8,12 +8,12 @@ import scalismo.geometry.Point3D
 
 @main def alignMeshes() = 
     println("Aligning meshes and landmarks")
-    val dataFolder = new File("data/vertebrae/")
-    val ref = MeshIO.readMesh(new File(dataFolder, "ref_20.ply")).get
-    val lms = LandmarkIO.readLandmarksJson[_3D](new File(dataFolder, "ref_20.json")).get
+    val dataDir = new File("data/vertebrae/")
+    val ref = MeshIO.readMesh(new File(dataDir, "ref_20.ply")).get
+    val lms = LandmarkIO.readLandmarksJson[_3D](new File(dataDir, "ref_20.json")).get
     
-    val rawDataFolder = new File(dataFolder, "raw/")
-    val alignedDataFolder = new File(dataFolder, "/aligned/")
+    val rawDataFolder = new File(dataDir, "raw/")
+    val alignedDataFolder = new File(dataDir, "/aligned/")
     alignedDataFolder.mkdirs()
 
     rawDataFolder.listFiles().filter(_.getName.endsWith(".ply")).foreach { f => 

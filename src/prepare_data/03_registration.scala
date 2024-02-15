@@ -16,13 +16,13 @@ import gingr.api.registration.config.AlongNormalClosestPoint
 
 @main def registerMeshes() = 
     println("register meshes / establish point-to-point correspondences")
-    val dataFolder = new File("data/vertebrae/")
-    val gpmmFile = new File(dataFolder, "gpmm.h5.json")
+    val dataDir = new File("data/vertebrae/")
+    val gpmmFile = new File(dataDir, "gpmm.h5.json")
     val gpmm = StatisticalModelIO.readStatisticalTriangleMeshModel3D(gpmmFile).get
-    val lms = LandmarkIO.readLandmarksJson[_3D](new File(dataFolder, "ref_20.json")).get
+    val lms = LandmarkIO.readLandmarksJson[_3D](new File(dataDir, "ref_20.json")).get
 
-    val alignedDataFolder = new File(dataFolder, "aligned")
-    val registeredDataFolder = new File(dataFolder, "registered")
+    val alignedDataFolder = new File(dataDir, "aligned")
+    val registeredDataFolder = new File(dataDir, "registered")
     registeredDataFolder.mkdirs()
 
     alignedDataFolder.listFiles().filter(_.getName.endsWith(".ply")).sorted.foreach { f => 

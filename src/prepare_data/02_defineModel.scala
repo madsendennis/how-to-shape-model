@@ -34,9 +34,9 @@ def createModel(ref: TriangleMesh[_3D]): PointDistributionModel[_3D, TriangleMes
 
 @main def createGPMM() = 
     println("Create deformable model for non-rigid registration")
-    val dataFolder = new File("data/vertebrae/")
-    val ref = MeshIO.readMesh(new File(dataFolder, "ref_20.ply")).get
-    val gpmmFile = new File(dataFolder, "gpmm.h5.json")
+    val dataDir = new File("data/vertebrae/")
+    val ref = MeshIO.readMesh(new File(dataDir, "ref_20.ply")).get
+    val gpmmFile = new File(dataDir, "gpmm.h5.json")
 
     val gpmm = StatisticalModelIO.readStatisticalTriangleMeshModel3D(gpmmFile).getOrElse({
         println("Model not found, creating new one")
