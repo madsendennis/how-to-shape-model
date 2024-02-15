@@ -3,7 +3,7 @@ The almost complete idiot guide to making your first shape model.
 
 This repository contains the video scripts and coding scripts as used in the YouTube video series [How to Shape Model](#).
 
-In the video series, I go over all the practical design decisions when creating a statistical shape models (SSM).
+In the video series, I go over all the practical design decisions when creating a statistical shape model (SSM).
 
 1. [Introduction/Overview and Point-correspondence](docs/01_Introduction.md)
    * Video coming <!-- * [Video]() -->
@@ -18,6 +18,8 @@ In the video series, I go over all the practical design decisions when creating 
 6. [Registration Framework GiNGR](docs/06_GiNGR.md)
    * Video coming <!-- * [Video]() -->
 7. [Model evaluation](docs/07_Evaluation.md)
+   * Video coming <!-- * [Video]() -->
+8. [Model visualization](docs/08_Visualization.md)
    * Video coming <!-- * [Video]() -->
 
 The accompanying code can be found in the source folder. To generate all the output files as shown in the videos, execute each of the `scala` scripts in order.
