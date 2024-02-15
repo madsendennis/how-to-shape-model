@@ -16,7 +16,7 @@ import scalismo.utils.Random.implicits._
 
     val dataCollection = DataCollection.fromTriangleMesh3DSequence(ref, registeredMeshes)
     val ssm = PointDistributionModel.createUsingPCA(dataCollection)
-    // StatisticalModelIO.writeStatisticalTriangleMeshModel3D(ssm, ssmFile)
+    StatisticalModelIO.writeStatisticalTriangleMeshModel3D(ssm, ssmFile)
 
     val ui = ScalismoUI()
     ui.show(ssm, "ssm")
