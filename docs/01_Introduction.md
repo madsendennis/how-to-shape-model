@@ -92,7 +92,7 @@ Let’s look at a simple case of 3 hands that I've just drawn up by hand. What t
 
 When meshes are extracted from images e.g. by using the marching cubes algorithm or by scanning an object, they will not by default be in point-correspondence. They will rarely have the same number of points. For this, we can perform non-rigid registration between a reference mesh and all the meshes in our dataset to obtain this property. This is also often referred to as fitting.
 
-A simple way to explain this, is that we choose 1 reference mesh and we then find a deformation field that deforms the reference mesh to approximate each of the meshes in the dataset. As an example, we can overlay two hands and show the deformation needed to warp one hand into the other hand on the 10 given points.
+A simple way to explain this, is that we choose 1 reference mesh and we then find a deformation field that deforms the reference mesh to approximate each of the meshes in the dataset. As an example, we can overlay two hands and show the deformation needed to warp one hand into the other hand on the 11 given points.
 
 ![Hands Dataset!](/img/hands/hands_deformations.png)
 
