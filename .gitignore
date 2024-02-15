@@ -3,6 +3,7 @@
 data/vertebrae/aligned/*
 data/vertebrae/registered/*
 data/vertebrae/*.h5.json
+data/tmp/*
 
 out/
 .bloop/
