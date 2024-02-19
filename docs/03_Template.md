@@ -4,7 +4,7 @@ In this tutorial, I'll show you how to design the reference shape of your your s
 ![Vertebrae noisy segmented!](/img/vertebrae/verse024.png) to this clean and smooth mesh ![Vertebrae smoothened!](/img/vertebrae/verse024_registered.png) which will dramatically improve the usefulness of our shape model.
 
 <!-- Hi and welcome to “Coding with Dennis” - my name is Dennis  -->
-This is the second tutorial in the series on how to create statistical shape models. 
+This is the third tutorial in the series on how to create statistical shape models. 
 
 Choosing a good reference mesh is a very important step - but unfortunately also often overlooked. By mastering this step, you'll be able to create shape models that generalise better and can be magnitudes faster and easier to use. It is very important to keep the final application of the shape model in mind when choosing a reference shape. A model used for animation in contrast to a model used for segmentation or for feature point extraction can have very different requirements. 
 
@@ -21,7 +21,9 @@ Meshmixer will be used for manual correction of the mesh. Oftentimes, I even go 
 
 So, let's get started and create a reference mesh. For this, I'll choose a random mesh from the Vertebra dataset as mentioned in the introduction tutorial of the series.
 
-The very first thing I normally do, is to align the mesh to the origin and rotate it in the direction you are interested in. I typically try out the automatic alignment first `filters -> Normals, Curvature and Orientation -> Tranform: Align to Principal Axis`
+The very first thing I normally do, is to align the mesh to the origin and rotate it in the direction you are interested in. This can either be done with Scalismo as showed in the previous tutorial, or we can do it semi-manually in e.g. MeshLab. 
+
+I typically try out an automatic alignment first, in MeshLab, this is found under `filters -> Normals, Curvature and Orientation -> Tranform: Align to Principal Axis`
 ![Meshlab align!](/img/meshlab_align.png)
 This will center the mesh and align the principal axises of the mesh to the x, y and z axises. 
 Alternatively, the center of the mesh can be manually set with the `Transform: Translate, Center, set Origin` module

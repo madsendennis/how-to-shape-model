@@ -105,8 +105,8 @@ To run all of the examples shown in this and future videos, you just need to exe
 
 So, in the following videos we will go over:
 
-1. How to choose or design a reference mesh.
-2. How to rigidly align the mesh data to simplify the non-rigid registration.
+1. How to rigidly align the mesh data to simplify the non-rigid registration.
+2. How to choose or design a reference mesh.
 3. How to choose the space of possible deformations that the reference mesh can undergo.
 4. How to manually code up a simple non-rigid registration algorithm.
 5. How to perform non-rigid registration with different registration algorithms using the GiNGR framework. 

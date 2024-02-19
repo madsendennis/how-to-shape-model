@@ -1,18 +1,18 @@
 # How to shape model - Part 3 - Alignment / Rigid registration
 
-In this tutorial, I'll show you different methods to rigidly align your dataset. We will go from randomly ![Vertebrae dataset!](/img/vertebrae/all_raw.png) aligned meshes to a well-aligned set of meshes ![Vertebrae dataset!](/img/vertebrae/all_aligned.png) from where it is much simpler to establish point-correspondence.
+In this tutorial, I'll show you different methods to rigidly align your dataset. We will go from randomly aligned meshes ![Vertebrae dataset!](/img/vertebrae/all_raw.png) to a well-aligned set of meshes from where it is much simpler to establish point-correspondence ![Vertebrae dataset!](/img/vertebrae/all_aligned.png) 
 
 <!-- Hi and welcome to “Coding with Dennis” - my name is Dennis  -->
-This is the third tutorial in the series on how to create statistical shape models. 
+This is the second tutorial in the series on how to create statistical shape models. 
 
 Aligning your dataset can be tedious, but the time spent here can be well worth it, as it will make it much simpler to establish point correspondence and thereby create great statistical shape models.
 
 In this tutorial, I'll go over 4 different methods for aligning your dataset.
-* We will start looking at the most basic, which always works, manual landmark annotation.
-* Then we will look at simple automatic alignment methods such as
+1. We will start looking at the most basic, which always works, manual landmark annotation.
+2. Then we will look at simple automatic alignment methods such as
     * centre alignment and
     * PCA alignment
-* Finally, we will look at a fully automatic iterative alignment method, namely rigid iterative closest point, or ICP.
+3. Finally, we will look at a fully automatic iterative alignment method, namely rigid iterative closest point, or ICP.
 
 Also have a look at the official scalismo documentation, there is also a guide on rigid alignment [link](https://scalismo.org/docs/Tutorials/tutorial02).
 
@@ -31,8 +31,11 @@ val lm = LandmarkIO.read(new File("");
 
 Origin alignment is an automatic method that works well if the orientation of the meshes are similar. This could also additionally be refined with rigid alignment that we will discuss briefly.
 ```scala
-val origin = ???
-val transform = ???
+    val file = new File("data/vertebrae/raw/sub-verse010_segment_20.ply")
+    val mesh: TriangleMesh[_3D] = MeshIO.readMesh(file).get
+    val origin = mesh.pointSet.points.map(_.toVector).reduce(_ + _) / mesh.pointSet.numberOfPoints
+    val translation = Translation3D(EuclideanVector3D(origin.x, origin.y, origin.z))
+    val alignedMesh = mesh.transform(translation.inverse)
 ```
 If the meshes have a major directional axis, then the PCA alignment could be useful. Note however that the axis direction might be opposites, so you will need to manually go over and rotate the meshes by 180 degrees around some of the axis. For this example I'll show you a few femur bones where there is a clear major axis direction.
 ```scala
