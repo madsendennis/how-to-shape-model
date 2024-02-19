@@ -38,7 +38,7 @@ We will use the newer Scala 3 format and stick to the new python like styling wi
 Now, let’s load in the data. The data is stored in a folder in .PLY format. We need to specify one of the meshes as the reference mesh. In The next video we will go over good practices of choosing this mesh. For now, a random one can be chosen.
 
 ```scala
-# src/explanation/01/01_create_ssm.scala
+# https://github.com/madsendennis/how-to-shape-model/blob/bf0bcbdf998e01d54064ec29cab83e09d6857ad0/src/explanation/01/01_create_ssm.scala
 ```
 
 And that’s basically all there is to it.
