@@ -38,15 +38,7 @@ We will use the newer Scala 3 format and stick to the new python like styling wi
 Now, let’s load in the data. The data is stored in a folder in .PLY format. We need to specify one of the meshes as the reference mesh. In The next video we will go over good practices of choosing this mesh. For now, a random one can be chosen.
 
 ```scala
-    val dataDir = new File("data/vertebrae/")
-    val dataFolder = new File(dataDir, "registered")
-    val meshes = dataFolder.listFiles().filter(_.getName.endsWith(".ply")).map(MeshIO.readMesh(_).get).toIndexedSeq
-    val ref = meshes.head
-
-    val dataCollection = DataCollection.fromTriangleMesh3DSequence(ref, meshes)
-    val ssm = PointDistributionModel.createUsingPCA(dataCollection)
-    val ui = ScalismoUI()
-    ui.show(ssm, "ssm")
+# src/explanation/01/01_create_ssm.scala
 ```
 
 And that’s basically all there is to it.
