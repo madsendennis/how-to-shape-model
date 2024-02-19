@@ -86,7 +86,7 @@ Let’s have a closer look at our meshes. For this, let’s visualize the same p
 
 If we do the same for the `registered` meshes, we see that this isn’t the case.
 
-Let’s look at a simple case of 3 hands that I've just drawn up by hand. What the shape model contains is essentially the mean position and variance for each point in the mesh - and of cause the covariance to neighbouring points. So in the case of the hands, we will find the mean hand size as well as the variability at each point. The corresponding points are here visualized with colors, so the same point color is located at the same anatomical point on each hand.
+Let’s look at a simple case of 3 hands that I've just drawn up by hand[^1]. What the shape model contains is essentially the mean position and variance for each point in the mesh - and of cause the covariance to neighbouring points. So in the case of the hands, we will find the mean hand size as well as the variability at each point. The corresponding points are here visualized with colors, so the same point color is located at the same anatomical point on each hand.
 
 ![Hands Dataset!](/img/hands/hands_correspondence.png)
 
@@ -118,3 +118,5 @@ And then extra videos, not specifically on building models are
    
 <!-- That was all for this video. Remember to give the video a like, comment below with your own shape model project and of course subscribe to the channel for more content like this.
 See you in the next video! -->
+
+[^1]: Hands from [Shape modelling course](https://shapemodelling.cs.unibas.ch/ssm-course/week1/step1-4/)

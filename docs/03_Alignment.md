@@ -14,6 +14,8 @@ In this tutorial, I'll go over 4 different methods for aligning your dataset.
     * PCA alignment
 * Finally, we will look at a fully automatic iterative alignment method, namely rigid iterative closest point, or ICP.
 
+Also have a look at the official scalismo documentation, there is also a guide on rigid alignment [link](https://scalismo.org/docs/Tutorials/tutorial02).
+
 For the manual annotation, let's start an instance of Scalismo-UI and load a mesh. Then we click the landmarking tool and start clicking landmarks. Either you can make use of the order the landmarks are defined, or as an alternative, I like to give meaningful names to the landmarks. If you have a large dataset, you can code up a semi-automatic method to help automatically change the landmarking names. Still, for the simplicity of this tutorial, we stick to manually editing the names.
 
 After the landmarks are clicked for each and every mesh in the dataset, it is time to align our data using Scalismo. 
