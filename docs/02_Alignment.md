@@ -37,13 +37,39 @@ Origin alignment is an automatic method that works well if the orientation of th
     val translation = Translation3D(EuclideanVector3D(origin.x, origin.y, origin.z))
     val alignedMesh = mesh.transform(translation.inverse)
 ```
+If you have metadata or some domain specific knowledge that hints about the applied rotation, translation and even scaling, you can also build up your own complete transformation by specifying each of the components. Classes exist that then applies the different transformations one after the other, as hinted by the name. In the case of `TranslationAfterScalingAfterRotation3D`, rotation will be applied first, then scaling and then translation. 
+```scala
+    val translation = Translation3D(EuclideanVector3D(origin.x, origin.y, origin.z))
+    val rotation = Rotation3D(phi = 0, theta = 0, psi = 0, center = Point3D(0, 0, 0))
+    val scaling = Scaling3D(1.0)
+    val transformation = TranslationAfterScalingAfterRotation3D(translation, scaling, rotation)
+    val alignedMesh = mesh.transform(transformation)
+```
+
 If the meshes have a major directional axis, then the PCA alignment could be useful. Note however that the axis direction might be opposites, so you will need to manually go over and rotate the meshes by 180 degrees around some of the axis. For this example I'll show you a few femur bones where there is a clear major axis direction.
 ```scala
-val pca = ???
-```
-Finally, let's perform the alignment using automatic ICP alignment
+    def alignmentPrincipalAxises(mesh: TriangleMesh3D): RotationAfterTranslation[_3D] =
+        val N = 1.0 / mesh.pointSet.numberOfPoints
+        val center = (mesh.pointSet.points.map(_.toVector).reduce(_ + _) / mesh.pointSet.numberOfPoints).toPoint
+        val cov = mesh.pointSet.points.foldLeft[SquareMatrix[_3D]](SquareMatrix.zeros)((acc, e) => acc + (e - center).outer(e - center)) * N
+        val SVD(u, _, _) = breeze.linalg.svd(cov.toBreezeMatrix)
+        val translation = Translation3D(center.toVector).inverse
+        val rotation = Rotation3D(SquareMatrix[_3D](u.toArray), Point3D(0, 0, 0)).inverse
+        RotationAfterTranslation(rotation, translation)
 
-// Rigid ICP
+    val translation = Translation3D(EuclideanVector3D(100,100,100))
+    val rotation = Rotation3D(phi = Math.PI/8, theta = Math.PI/4, psi = Math.PI/2, center = Point3D(0, 0, 0))
+    val transformation = TranslationAfterRotation(translation, rotation)
+    val targetMesh = mesh.transform(transformation)
+
+    val transformationPCA = alignmentPrincipalAxises(targetMesh)
+    val orientedMesh = targetMesh.transform(transformationPCA)
+```
+Finally, let's perform the alignment using automatic ICP alignment. [Scalismo Rigid ICP tutorial](https://scalismo.org/docs/Tutorials/tutorial10)
+
+```scala
+
+```
 
 In reality, you might often end up using a mixture of the above-mentioned methods. For the vertebras, I have defined a few manually clicked landmarks as also available on the github repository. After the rough initial alignment, I performed rigid ICP.
 Depending on the dataset you are working with, a different mixture might be more useful.
