@@ -27,26 +27,26 @@ def alignmentPrincipalAxises(mesh: TriangleMesh3D): RotationAfterTranslation[_3D
     val rotation = Rotation3D(SquareMatrix[_3D](u.toArray), Point3D(0, 0, 0)).inverse
     RotationAfterTranslation(rotation, translation)
 
-// def attributeCorrespondences(movingMesh: TriangleMesh[_3D], ptIds : Seq[PointId]) : Seq[(Point[_3D], Point[_3D])] = 
-//     ptIds.map((id : PointId) =>
-//         val pt = movingMesh.pointSet.point(id)
-//         val closestPointOnMesh2 = mesh2.pointSet.findClosestPoint(pt).point
-//         (pt, closestPointOnMesh2)
-//     )
+def attributeCorrespondences(movingMesh: TriangleMesh3D, ptIds : Seq[PointId], target: TriangleMesh3D) : Seq[(Point3D, Point3D)] = 
+    ptIds.map((id : PointId) =>
+        val pt = movingMesh.pointSet.point(id)
+        val closestPointOnMesh2 = target.pointSet.findClosestPoint(pt).point
+        (pt, closestPointOnMesh2)
+    )
 
-// def ICPRigidAlign(movingMesh: TriangleMesh3D, ptIds : Seq[PointId], numberOfIterations : Int) : TriangleMesh[_3D] = 
-//     if (numberOfIterations == 0) then 
-//       movingMesh 
-//     else 
-//       val correspondences = attributeCorrespondences(movingMesh, ptIds)
-//       val transform = LandmarkRegistration.rigid3DLandmarkRegistration(correspondences, center = Point(0, 0, 0))
-//       val transformed = movingMesh.transform(transform)
-//       ICPRigidAlign(transformed, ptIds, numberOfIterations - 1)  
+def ICPRigidAlign(moving: TriangleMesh3D, target: TriangleMesh3D, ptIds : Seq[PointId], numberOfIterations : Int) : TriangleMesh3D = 
+    if (numberOfIterations == 0) then 
+      moving 
+    else 
+      val correspondences = attributeCorrespondences(moving, ptIds, target)
+      val transform = LandmarkRegistration.rigid3DLandmarkRegistration(correspondences, center = Point(0, 0, 0))
+      val transformed = moving.transform(transform)
+      ICPRigidAlign(transformed, target, ptIds, numberOfIterations - 1)  
 
 
-// def alignmentRigidICP(mesh: TriangleMesh3D, numOfPoints: Int, iterations: Int): TriangleMesh[_3D] = 
-//     val ptIds = (0 until mesh.pointSet.numberOfPoints by 50).map(i => PointId(i))
-//     ICPRigidAlign(mesh, ptIds, iterations)
+def alignmentRigidICP(reference: TriangleMesh3D, target: TriangleMesh3D, numOfPoints: Int, iterations: Int): TriangleMesh3D = 
+    val ptIds = (0 until reference.pointSet.numberOfPoints by 50).map(i => PointId(i))
+    ICPRigidAlign(reference, target, ptIds, iterations)
 
 
 @main def main() = 
@@ -60,8 +60,12 @@ def alignmentPrincipalAxises(mesh: TriangleMesh3D): RotationAfterTranslation[_3D
     val targetMesh = mesh.transform(transformation)
     
     val transformationPCA = alignmentPrincipalAxises(targetMesh)
-    val orientedMesh = targetMesh.transform(transformationPCA)
+    val orientedMeshPCA = targetMesh.transform(transformationPCA)
+    val orientedMeshICP = alignmentRigidICP(targetMesh, mesh,  50, 10)
+    // val orientedMeshICP = targetMesh.transform(transformationPCA)
 
     val ui = ScalismoUI()
+    ui.show(mesh, "mesh").color = java.awt.Color.YELLOW
     ui.show(targetMesh, "mesh").color = java.awt.Color.RED
-    ui.show(orientedMesh, "mesh").color = java.awt.Color.GREEN
+    ui.show(orientedMeshPCA, "mesh").color = java.awt.Color.GREEN
+    ui.show(orientedMeshICP, "mesh").color = java.awt.Color.BLUE

@@ -70,6 +70,7 @@ Finally, let's perform the alignment using automatic ICP alignment. [Scalismo Ri
 ```scala
 
 ```
+<!-- Create animation from RIGID ICP alignment -->
 
 In reality, you might often end up using a mixture of the above-mentioned methods. For the vertebras, I have defined a few manually clicked landmarks as also available on the github repository. After the rough initial alignment, I performed rigid ICP.
 Depending on the dataset you are working with, a different mixture might be more useful.
