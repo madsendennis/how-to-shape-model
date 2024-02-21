@@ -163,7 +163,7 @@ We start out with 5 meshes that are registered, from this we can create a PCA ke
 And that’s the end of the practical guide to choosing your kernels and hyperparameters. Really the most crucial part being visualizing your models at every step of the way. Also rememeber to look at the official Scalismo tutorial on [Gaussian Processes and Kernels](https://scalismo.org/docs/Tutorials/tutorial07) as the kernels are introduced there as well. 
 
 In the next tutorial I'll show you:
-* How to manually code up a simple non-rigid registration algorithm.
+* How to use the model we created to fit to a target mesh, also known as non-rigid registration.
 
 <!-- That was all for this video. Remember to give the video a like, comment below with your own shape model project and of course subscribe to the channel for more content like this.
 See you in the next video! -->
