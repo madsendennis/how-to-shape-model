@@ -6,8 +6,8 @@ import scalismo.geometry._3D
 import scalismo.registration.LandmarkRegistration
 import scalismo.geometry.Point3D
 import scalismo.statisticalmodel.PointDistributionModel3D
-import scalismo.kernels.GaussianKernel
-import scalismo.kernels.DiagonalKernel
+import scalismo.kernels.DiagonalKernel3D
+import scalismo.kernels.GaussianKernel3D
 import scalismo.mesh.TriangleMesh
 import scalismo.statisticalmodel.LowRankGaussianProcess
 import scalismo.common.interpolation.TriangleMeshInterpolator3D
@@ -26,8 +26,8 @@ def createModel(ref: TriangleMesh[_3D]): PointDistributionModel[_3D, TriangleMes
     val sigma = 35.0
     val relativeTolerance = 0.01
 
-    val kernel = GaussianKernel[_3D](sigma) * scaling
-    val gp = GaussianProcess3D[EuclideanVector[_3D]](DiagonalKernel(kernel, 3))
+    val kernel = GaussianKernel3D(sigma, scaling)
+    val gp = GaussianProcess3D[EuclideanVector[_3D]](DiagonalKernel3D(kernel, 3))
     val lrGP = LowRankGaussianProcess.approximateGPCholesky(ref, gp, relativeTolerance, interpolator = NearestNeighborInterpolator3D())
     val gpmm = PointDistributionModel3D(ref, lrGP)
     gpmm
