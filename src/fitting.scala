@@ -22,6 +22,24 @@ import scalismo.statisticalmodel.PointDistributionModel
 import scalismo.io.StatisticalModelIO
 import scalismo.io.LandmarkIO
 
+
+def nonrigidICP(movingMesh: TriangleMesh[_3D], model: PointDistributionModel[_3D, TriangleMesh], targetMesh: TriangleMesh[_3D], ptIds : IndexedSeq[PointId], numberOfIterations : Int) : TriangleMesh[_3D] = 
+    def attributeCorrespondences(movingMesh: TriangleMesh[_3D], ptIds : IndexedSeq[PointId]) : IndexedSeq[(PointId, Point[_3D])] = 
+        ptIds.map( (id : PointId) =>
+            val pt = movingMesh.pointSet.point(id)
+            val closestPointOnMesh2 = targetMesh.pointSet.findClosestPoint(pt).point
+            (id, closestPointOnMesh2)
+            )
+    def fitModel(correspondences: IndexedSeq[(PointId, Point[_3D])], noise: Double) : TriangleMesh[_3D] = 
+        val posterior = model.posterior(correspondences, 1.0)
+        posterior.mean
+    if (numberOfIterations == 0) then
+        movingMesh 
+    else 
+        val correspondences = attributeCorrespondences(movingMesh, ptIds)
+        val transformed = fitModel(correspondences, 1.0)
+        nonrigidICP(transformed, model, targetMesh, ptIds, numberOfIterations - 1) 
+
 @main def kernels() = 
     println(s"Scalismo version: ${scalismo.BuildInfo.version}")
 
