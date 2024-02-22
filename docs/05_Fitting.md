@@ -119,7 +119,7 @@ If you would like to know more in detail about the technical aspects of GiNGR, w
 And now, finally, when we compute the fits of all the items in our dataset, we can refer to tutorial 1 on how to calculate our statistical shape model.
 ![Vertebrae Dataset!](/img/vertebrae/ssm.gif)
 
-And that’s the end of the practical steps to create your first statistical shape model. The most crucial part is to look at your data and from there, decide how e.g. the kernel parameters need to look as well as the noise assumption during the fitting stage. If the dataset is very noisy, it does not make sense to create a model with thousands of basis functions that can perfectly fit the data. And likewise, if you have perfectly clean data, you need to add enough basis functions to your model for it to be able to describe the data in detail. Also, remember to look at the official Scalismo tutorial on [Model fitting](https://scalismo.org/docs/Tutorials/tutorial11).
+And that’s the end of the practical steps to create your first statistical shape model. The most crucial part is to look at your data and from there, decide how e.g. the kernel parameters need to look as well as the noise assumption during the fitting stage. If the dataset is very noisy, it does not make sense to create a model with thousands of basis functions that can perfectly fit the data. And likewise, if you have perfectly clean data, you need to add enough basis-functions to your model for it to be able to describe the data in detail. Also, remember to look at the official Scalismo tutorial on [Model fitting](https://scalismo.org/docs/Tutorials/tutorial11).
 
 The remaining tutorials are focused on model evaluation and different ways to visualize your created statistical models. 
 
