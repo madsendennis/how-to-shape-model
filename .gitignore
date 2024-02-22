@@ -1,5 +1,40 @@
+.DS_Store
+
+data/vertebrae/aligned/*
+data/vertebrae/registered/*
+data/vertebrae/*.h5.json
+data/tmp/*
+data/femur/*
+data/face/*
+
+out/
+.bloop/
+.metals/
+.vscode/
+.idea/
+
+.bsp
+.scala-build
+dest/
+target/
+
 *.class
 *.log
+*.tasty
+*.semanticdb
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
