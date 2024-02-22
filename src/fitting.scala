@@ -21,24 +21,39 @@ import scalismo.common.EuclideanSpace
 import scalismo.statisticalmodel.PointDistributionModel
 import scalismo.io.StatisticalModelIO
 import scalismo.io.LandmarkIO
+import scalismo.mesh.MeshMetrics
 
-
-def nonrigidICP(movingMesh: TriangleMesh[_3D], model: PointDistributionModel[_3D, TriangleMesh], targetMesh: TriangleMesh[_3D], ptIds : IndexedSeq[PointId], numberOfIterations : Int) : TriangleMesh[_3D] = 
-    def attributeCorrespondences(movingMesh: TriangleMesh[_3D], ptIds : IndexedSeq[PointId]) : IndexedSeq[(PointId, Point[_3D])] = 
+def nonrigidICP(model: PointDistributionModel[_3D, TriangleMesh], targetMesh: TriangleMesh3D, numOfSamplePoints: Int, numOfIterations: Int) : TriangleMesh3D = 
+    val numOfPoints = model.reference.pointSet.numberOfPoints
+    val ptIds = (0 until numOfPoints by (numOfPoints / numOfIterations)).map(i => PointId(i))
+    
+    def attributeCorrespondences(movingMesh: TriangleMesh3D) : IndexedSeq[(PointId, Point[_3D])] = 
         ptIds.map( (id : PointId) =>
             val pt = movingMesh.pointSet.point(id)
             val closestPointOnMesh2 = targetMesh.pointSet.findClosestPoint(pt).point
             (id, closestPointOnMesh2)
             )
-    def fitModel(correspondences: IndexedSeq[(PointId, Point[_3D])], noise: Double) : TriangleMesh[_3D] = 
-        val posterior = model.posterior(correspondences, 1.0)
-        posterior.mean
-    if (numberOfIterations == 0) then
-        movingMesh 
-    else 
-        val correspondences = attributeCorrespondences(movingMesh, ptIds)
-        val transformed = fitModel(correspondences, 1.0)
-        nonrigidICP(transformed, model, targetMesh, ptIds, numberOfIterations - 1) 
+
+    def fitting(movingMesh: TriangleMesh3D, iteration: Int, uncertainty: Double): TriangleMesh3D =
+        println(s"iteration: $iteration")
+        if (iteration == 0) then
+            movingMesh 
+        else 
+            val correspondences = attributeCorrespondences(movingMesh)
+            val posterior = model.posterior(correspondences, uncertainty)
+            posterior.mean
+            fitting(posterior.mean, iteration - 1, uncertainty)
+        
+    fitting(model.reference, numOfIterations, 1.0)
+
+
+def evaluate(mesh1: TriangleMesh3D, mesh2: TriangleMesh3D, description: String): Unit =
+    val avg1 = MeshMetrics.avgDistance(mesh1, mesh2)
+    val avg2 = MeshMetrics.avgDistance(mesh2, mesh1)
+    val hausdorff1 = MeshMetrics.hausdorffDistance(mesh1, mesh2)
+    val hausdorff2 = MeshMetrics.hausdorffDistance(mesh2, mesh1)
+    println(s"$description - avg1: $avg1, avg2: $avg2, hausdorff1: $hausdorff1, hausdorff2: $hausdorff2")
+
 
 @main def kernels() = 
     println(s"Scalismo version: ${scalismo.BuildInfo.version}")
@@ -56,11 +71,17 @@ def nonrigidICP(movingMesh: TriangleMesh[_3D], model: PointDistributionModel[_3D
     val lmPosterior = gpmm.posterior(lmsData, 1.0)
     val lmFit = lmPosterior.mean
 
+    val icpFit = nonrigidICP(lmPosterior, targetMesh, 100, 50)
+
+    evaluate(targetMesh, lmFit, "lmFit")
+    evaluate(targetMesh, icpFit, "icpFit")
+
     val ui = ScalismoUI()
     val modelGroup = ui.createGroup("modelGroup")
     val targetGroup = ui.createGroup("targetGroup")
     ui.show(modelGroup, gpmm, "gpmm")
-    ui.show(modelGroup, lms, "landmarks")
+    // ui.show(modelGroup, lms, "landmarks")
     ui.show(targetGroup, targetMesh, "target")
     ui.show(targetGroup, lmFit, "lmFit")
-    ui.show(targetGroup, targetLms, "landmarks")
+    ui.show(targetGroup, icpFit, "icpFit")
+    // ui.show(targetGroup, targetLms, "landmarks")
