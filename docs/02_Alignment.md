@@ -65,6 +65,8 @@ val ui = ScalismoUI()
 
 Then we click the landmarking tool and start clicking landmarks. Either you can make use of the order the landmarks are defined, or as an alternative, I like to give meaningful names to the landmarks. If you have a large dataset, you can code up a semi-automatic method to help automatically change the landmarking names.
 
+![Scalismo landmarks!](/img/scalismo_landmarks.png)
+
 After the landmarks are clicked for each and every mesh in the dataset, it is time to align our data using Scalismo. 
 
 We first load in the reference landmarks file as these are the ones we would like to align our data to.
@@ -94,9 +96,6 @@ In the above example, all the landmarks are paired based on their index in the l
     val transform = LandmarkRegistration.rigid3DLandmarkRegistration(landmarksPairs, Point3D(0,0,0))
 ```
 
-![Scalismo landmarks!](/img/scalismo_landmarks.png)
-
-
 Finally, let's perform the alignment using automatic ICP alignment. This implementation is also one of the tutorials provided on the Scalismo website [Scalismo Rigid ICP tutorial](https://scalismo.org/docs/Tutorials/tutorial10)
 
 ```scala
@@ -120,8 +119,11 @@ def alignmentRigidICP(reference: TriangleMesh3D, target: TriangleMesh3D, numOfPo
     ICPRigidAlign(reference, ptIds, iterations)
 ```
 This method will iteratively estimate the corresponding points between the two meshes, calculate the transformation difference between the meshes and apply the transformation to one of the meshes. This method works well if the orientation of the meshes has already been solved. Often I use this as an additional alignment step after aligning the meshes with a few landmarks. 
+
 ![Femur rigid alignment ICP!](/img/align_rigid.gif)
+
 If one of the meshes is flipped around an axis, the method might end up in the wrong orientation:
+
 ![Femur rigid alignment ICP - Opposite!](/img/align_rigid_opposite.gif)
 
 In reality, you might often end up using a mixture of the above-mentioned methods. For the vertebras, I have defined a few manually clicked landmarks as also available on the GitHub repository.

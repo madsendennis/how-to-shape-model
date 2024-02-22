@@ -80,7 +80,6 @@ A Point distribution model can also be directly viewed in Scalismo, and we have 
 ```
 ![Scalismo PDM!](/img/scalismo_pdm.png)
 After having found the correct parameters to use for the model, it can be stored in a file and directly read again from disk, to avoid computing the model when we use it in the following tutorials. 
-
 ```scala
     StatismoIO.writeStatisticalTriangleMeshModel3D(pdm, new File("pdm.h5.json"))
     val pdmRead = StatismoIO.readStatisticalTriangleMeshModel3D(new File("pdm.h5.json")).get
@@ -105,7 +104,7 @@ For completeness of this video, let’s continue adding some local deformations 
     val kernel = kernelCoarse + kernelFine
     val diagonal = DiagonalKernel3D(kernel, 3)
 ```
-![Scalismo mesh size!](/img/faces/pdm_gaussian.png)
+![PDM Gaussian!](/img/faces/pdm_gaussian.png)
 
 ## Symmetry Kernel
 An alternative kernel is the symmetry kernel. To showcase this kernel, I’ll use the reference mesh from the [Basel Face Model](https://faces.dmi.unibas.ch/bfm/bfm2019.html). First, let's look at how a random sample from the face model looks like with the kernel

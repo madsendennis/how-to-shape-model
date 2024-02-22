@@ -32,7 +32,7 @@ Since we have landmark points available both for the model and the target mesh, 
     val lmPosterior = gpmm.posterior(lmsData, 1.0)
     val lmFit = lmPosterior.mean
 ```
-For some applications, this might be good enough. We can even just continue adding landmarks to get the surfaces closer and closer together. You might also want to play around with the uncertainty value when calculating the posterior, this value should be seen as the uncertainty of the landmark observation. 
+For some applications, this might be good enough. We can even continue adding landmarks to get the surfaces closer and closer together. You might also want to play around with the uncertainty value when calculating the posterior, this value should be seen as the uncertainty of the landmark observation. 
 
 Instead of adding more landmarks, we want to find the "corresponding points" automatically. To do so, we will implement a form of iterative closest point (ICP)algorithm, which uses the same principle as above, to calculate a posterior model given some observations and then we take the most likely shape, i.e. the mean from the distribution as our proposal. 
 To find the corresponding points, we simply estimate this to be the closest point on the target surface. To begin with, we can then assign a large uncertainty value to our observation. The idea is then to iteratively move the model closer to the target mesh, by estimating new corresponding points in each iteration and lowering the uncertainty. 
@@ -63,7 +63,7 @@ def nonrigidICP(model: PointDistributionModel[_3D, TriangleMesh], targetMesh: Tr
     fitting(model.reference, numOfIterations, 1.0)
 ```
 
-A ton of configuration possibilities exist for the ICP algorithm, for instance how the closest points are taken, which is calculated in the `attributeCorrespondence` function. This could be either the closest Euclidean point on a target surface (as done), the closest vertex on the target surface, closest point along the surface normal, we could also estimate the closest points from the target to the model instead, and many more methods exist to make it more robust. The same goes for the `uncertainty` value, which can either be manually set for all correspondent pairs or we can come up with a way to calculate the uncertainty based on the distance between the model surface and the target surface for each point. In the example, the uncertainty is a standard multivariate normal distribution, but we could also provide different uncertainty in different directions. 
+A ton of configuration possibilities exist for the ICP algorithm, for instance how the closest points are taken, which is calculated in the `attributeCorrespondence` function. This could be either the closest Euclidean point on a target surface, the closest vertex on the target surface (as done), closest point along the surface normal, we could also estimate the closest points from the target to the model instead, and many more methods exist to make it more robust. The same goes for the `uncertainty` value, which can either be manually set for all correspondent pairs or we can come up with a way to calculate the uncertainty based on the distance between the model surface and the target surface for each point. In the example, the uncertainty is a standard multivariate normal distribution, but we could also provide different uncertainty in different directions. 
 
 When running the fitting, we can either make use of the original model `gpmm` or we can use the model that is conditioned on the landmark observations. 
 
@@ -93,11 +93,11 @@ icpFit - avg1: 1.81, avg2: 1.22, hausdorff1: 8.67, hausdorff2: 8.67
 This means that the average distance improved, but we have a slightly larger maximum distance found. Also, note that the distance from the target to the fit and from the fit to the target might not be the same as internally, the distance functions are using the closest point to decide the point on the opposite mesh. 
 
 ## GiNGR
-In its full length: Generalized Iterative Non-Rigid Point Cloud and Surface Registration Using Gaussian Process Regression, is a library built on top of Scalismo which implements some more sophisticated ways to perform non-rigid registration. 
-The main principles behind the [GiNGR](https://github.com/unibas-gravis/GiNGR) library are exactly what we went through in the manual example that we coded up. We need to select a deformable model for the fitting, then we need to decide how the corresponding points are being estimated in each iteration and finally, we need to set the observation uncertainty.
+In its full length: Generalized Iterative Non-Rigid Point Cloud and Surface Registration Using Gaussian Process Regression, is a framework built on top of Scalismo which implements some more sophisticated ways to perform non-rigid registration. And full disclosure, I'm one of the maintainers of the repository which is based on my PhD. thesis. 
+The main principles behind the [GiNGR](https://github.com/unibas-gravis/GiNGR) framwork are exactly what we went through in the manual example that we coded up. We need to select a deformable model for the fitting, then we need to decide how the corresponding points are being estimated in each iteration and finally, we need to set the observation uncertainty.
 
 The framework already comes with multiple different examples of how to perform fitting, but also automatic methods to calculate the models. 
-In the `prepare_data/03_registration.scala` I've made use of the GiNGR framework and I'm using the `Coherent Point Drift` implementation.
+In the `prepare_data/03_registration.scala` I've made use of the GiNGR framework where I make use of the `Coherent Point Drift` implementation.
 ![GiNGR CPD fitting vertebrae](/img/fitting_vertebrae.gif)
 
 This method is very good in correcting minor rigid alignment offsets between the model and the target as well as giving a coarse fit to the data. As our data is very noisy, I'm already stopping after the coarse fit, as we would otherwise just start explaining the noise in the data with our model. 
@@ -116,7 +116,7 @@ By no means are all of these steps necessary in all cases. Always start with a s
 
 If you would like to know more in detail about the technical aspects of GiNGR, we've also put out a white paper, which you can find on [arXiv](https://arxiv.org/abs/2203.09986).
 
-And now, finally, when we compute the fits of all the items in our dataset, we can refer to tutorial 1 on how to calculate our statistical shape model.
+And now, finally, when we compute the fits of all the items in our Vertebrae dataset, we can refer to tutorial 1 on how to calculate our statistical shape model.
 ![Vertebrae Dataset!](/img/vertebrae/ssm.gif)
 
 And that’s the end of the practical steps to create your first statistical shape model. The most crucial part is to look at your data and from there, decide how e.g. the kernel parameters need to look as well as the noise assumption during the fitting stage. If the dataset is very noisy, it does not make sense to create a model with thousands of basis functions that can perfectly fit the data. And likewise, if you have perfectly clean data, you need to add enough basis-functions to your model for it to be able to describe the data in detail. Also, remember to look at the official Scalismo tutorial on [Model fitting](https://scalismo.org/docs/Tutorials/tutorial11).
