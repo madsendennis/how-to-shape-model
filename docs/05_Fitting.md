@@ -87,8 +87,8 @@ evaluate(targetMesh, icpFit, "icpFit")
 ```
 In my case, the output was:
 ```scala
-lmFit - avg1: 2.033799675355802, avg2: 1.6580122752981992, hausdorff1: 8.206450522317402, hausdorff2: 8.206450522317402
-icpFit - avg1: 1.8171933707056689, avg2: 1.2296173101253056, hausdorff1: 8.676210978086319, hausdorff2: 8.676210978086319
+lmFit - avg1: 2.03, avg2: 1.65, hausdorff1: 8.20, hausdorff2: 8.20
+icpFit - avg1: 1.81, avg2: 1.22, hausdorff1: 8.67, hausdorff2: 8.67
 ```
 This means that the average distance improved, but we have a slightly larger maximum distance found. Also, note that the distance from the target to the fit and from the fit to the target might not be the same as internally, the distance functions are using the closest point to decide the point on the opposite mesh. 
 
@@ -98,10 +98,19 @@ The main principles behind the [GiNGR](https://github.com/unibas-gravis/GiNGR) l
 
 The framework already comes with multiple different examples of how to perform fitting, but also automatic methods to calculate the models. 
 In the `prepare_data/03_registration.scala` I've made use of the GiNGR framework and I'm using the `Coherent Point Drift` implementation.
+![GiNGR CPD fitting vertebrae](/img/fitting_vertebrae.gif)
 
 This method is very good in correcting minor rigid alignment offsets between the model and the target as well as giving a coarse fit to the data. As our data is very noisy, I'm already stopping after the coarse fit, as we would otherwise just start explaining the noise in the data with our model. 
 
-But let's try to run the examples from the GiNGR repository, to get a feeling for how it can be used to fit very close to the target mesh. For this, let's look at the MultiResolution demo. This demo first solves a small rigid offset in the target mesh as well as giving a rough fitting using the `Coherent Point Drift` implementation. Notice how we use `runDecimated` instead of `run`, internally, this method will decimate both the model and the target mesh to speed up the fitting. In the second step, we switch to the `Iterative Closest Point` algorithm, as explained at the start of this tutorial, now we use a less decimated model. And finally, we do an additional step with the full resolution to fit all the intricate details in the mesh. 
+But let's try to run the examples from the GiNGR repository, to get a feeling for how it can be used to fit very close to the target mesh. For this, let's look at the MultiResolution demo. This demo first solves a small rigid offset in the target mesh as well as giving a rough fitting using the `Coherent Point Drift` implementation. Notice how we use `runDecimated` instead of `run`, internally, this method will decimate both the model and the target mesh to speed up the fitting. In the second step, we use a less decimated model, still using the same fitting method. Finally, we switch to the `Iterative Closest Point` algorithm, as explained at the start of this tutorial, where we do an additional step with the full resolution to fit all the intricate details in the mesh. 
+
+The average distance and max distances after each step:
+```scala
+    STEP 1 - average2surface: 1.76 max: 9.31
+    STEP 2 - average2surface: 0.57 max: 5.92
+    STEP 3 - average2surface: 0.21 max: 5.25
+```
+![Bunny multi-resolution fitting](/img/fitting_bunny.gif)
 
 By no means are all of these steps necessary in all cases. Always start with a simple model and one of the methods and try to identify what areas can be improved. Also, if speed is not an issue, you can of course skip decimating the meshes and just use the complete meshes. 
 

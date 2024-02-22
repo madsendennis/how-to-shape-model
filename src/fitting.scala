@@ -13,7 +13,6 @@ import scalismo.common.interpolation.TriangleMeshInterpolator3D
 import scalismo.common.interpolation.NearestNeighborInterpolator3D
 import scalismo.statisticalmodel.LowRankGaussianProcess
 import scalismo.io.statisticalmodel.StatismoIO
-import scalismo.statisticalmodel.PointDistributionModel3D
 import scalismo.kernels.GaussianKernel
 import scalismo.kernels.PDKernel
 import scalismo.kernels.MatrixValuedPDKernel
