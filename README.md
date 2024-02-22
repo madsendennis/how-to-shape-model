@@ -7,19 +7,17 @@ In the video series, I go over all the practical design decisions when creating 
 
 1. [Introduction/Overview and Point-correspondence](docs/01_Introduction.md)
    * Video coming <!-- * [Video]() -->
-2. [Template design](docs/02_Template.md)
+2. [Rigid Alignment](docs/02_Alignment.md)
    * Video coming <!-- * [Video]() -->
-3. [Rigid Alignment](docs/03_Alignment.md)
+3. [Template design](docs/03_Template.md)
    * Video coming <!-- * [Video]() -->
 4. [Deformable template / Kernel design](docs/04_Kernels.md)
    * Video coming <!-- * [Video]() -->
-5. [Simple Non-rigid registration](docs/05_SimpleNonRigid.md)
+5. [Non-rigid registration / fitting](docs/05_Fitting.md)
    * Video coming <!-- * [Video]() -->
-6. [Registration Framework GiNGR](docs/06_GiNGR.md)
+6. [Model evaluation](docs/06_Evaluation.md)
    * Video coming <!-- * [Video]() -->
-7. [Model evaluation](docs/07_Evaluation.md)
-   * Video coming <!-- * [Video]() -->
-8. [Model visualization](docs/08_Visualization.md)
+7. [Model visualization](docs/07_Visualization.md)
    * Video coming <!-- * [Video]() -->
 
 The accompanying code can be found in the source folder. To generate all the output files as shown in the videos, execute each of the `scala` scripts in order.
