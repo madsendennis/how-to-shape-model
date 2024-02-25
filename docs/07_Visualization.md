@@ -1,4 +1,4 @@
-# How to shape model - Part 8 - Model visualization
+# How to shape model - Part 7 - Model visualization
 
 - Convert a Shape Model into a gif
 - Visualize deformation field
