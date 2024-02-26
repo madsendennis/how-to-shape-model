@@ -1,4 +1,4 @@
-# How to shape model - Part 2 - Alignment / Rigid registration
+# How to Shape Model - Part 2 - Alignment / Rigid registration
 
 In this tutorial, I'll show you different methods to rigidly align your dataset. We will go from randomly aligned meshes ![Vertebrae dataset not aligned!](/img/vertebrae/all_raw.png) to a well-aligned set of meshes from where it is much simpler to establish point-correspondence ![Vertebrae dataset aligned!](/img/vertebrae/all_aligned.png) 
 

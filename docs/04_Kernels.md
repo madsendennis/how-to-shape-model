@@ -1,4 +1,4 @@
-# How to shape model - Part 4 - Deformable template / Kernel design
+# How to Shape Model - Part 4 - Deformable template / Kernel design
 
 In this tutorial, I'll show you how to define the space of deformations our template mesh can undergo. So we will go from a static mesh ![Vertebrae reference!](/img/vertebrae/ref.png), to a parameterized model that defines a space of deformations on the template, which we e.g. can randomly sample from to visually see the space of deformations ![Vertebrae ssm!](/img/vertebrae/ssm.gif).
 

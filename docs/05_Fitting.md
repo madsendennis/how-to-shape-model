@@ -1,4 +1,4 @@
-# How to shape model - Part 5 - Model fitting (non-rigid registration)
+# How to Shape Model - Part 5 - Model fitting (non-rigid registration)
 
 In this tutorial, I'll show you how to use the deformable model that we created to establish correspondence between meshes. 
 <!-- VIDEO OF Non-rigid registration -->

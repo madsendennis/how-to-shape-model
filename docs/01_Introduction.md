@@ -1,4 +1,4 @@
-# How to shape model - Part 1 - Introduction
+# How to Shape Model - Part 1 - Introduction
 
 In this series, I’ll show you how to get from a set of 3d meshes to a 3D statistical shape model. So let’s get right into it! 
 
