@@ -8,7 +8,7 @@ import scalismo.io.MeshIO
 // - apply "generate surface normals" to get a better visualization of the model.
 // - open the animation view.
 // -  set canvas size: view -> preview -> custom
-// -  choose model: sequence and set start time 0 and end time to number of meshes that are exported (68)
+// -  choose mode: sequence and set start time 0 and end time to number of meshes that are exported (68)
 // -  set no of frames to the frame rate you want times the number of seconds that the clip should last.
 // - export the animation (file -> save animation) as png files.
 
