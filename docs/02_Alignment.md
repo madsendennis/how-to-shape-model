@@ -1,4 +1,4 @@
-# How to shape model - Part 2 - Alignment / Rigid registration
+# How to Shape Model - Part 2 - Alignment / Rigid registration
 
 In this tutorial, I'll show you different methods to rigidly align your dataset. We will go from randomly aligned meshes ![Vertebrae dataset not aligned!](/img/vertebrae/all_raw.png) to a well-aligned set of meshes from where it is much simpler to establish point-correspondence ![Vertebrae dataset aligned!](/img/vertebrae/all_aligned.png) 
 
@@ -22,39 +22,39 @@ Also, have a look at the official Scalismo documentation, there is also a guide 
 
 Origin alignment is an automatic method that works well if the orientation of the meshes is similar. This could also additionally be refined with rigid ICP alignment which we will discuss briefly.
 ```scala
-    val file = new File("data/vertebrae/raw/sub-verse010_segment_20.ply")
-    val mesh: TriangleMesh[_3D] = MeshIO.readMesh(file).get
-    val origin = mesh.pointSet.points.map(_.toVector).reduce(_ + _) / mesh.pointSet.numberOfPoints
-    val translation = Translation3D(EuclideanVector3D(origin.x, origin.y, origin.z))
-    val alignedMesh = mesh.transform(translation.inverse)
+val file = new File("data/vertebrae/raw/sub-verse010_segment_20.ply")
+val mesh: TriangleMesh[_3D] = MeshIO.readMesh(file).get
+val origin = mesh.pointSet.points.map(_.toVector).reduce(_ + _) / mesh.pointSet.numberOfPoints
+val translation = Translation3D(EuclideanVector3D(origin.x, origin.y, origin.z))
+val alignedMesh = mesh.transform(translation.inverse)
 ```
 If you have metadata or some domain-specific knowledge that hints about the applied rotation, translation and even scaling, you can also build up your own complete transformation by specifying each of the components. Classes exist that then apply the different transformations one after the other, as hinted by the name. In the case of `TranslationAfterScalingAfterRotation3D`, the rotation will be applied first, then scaling and then translation. 
 ```scala
-    val translation = Translation3D(EuclideanVector3D(origin.x, origin.y, origin.z))
-    val rotation = Rotation3D(phi = 0, theta = 0, psi = 0, center = Point3D(0, 0, 0))
-    val scaling = Scaling3D(1.0)
-    val transformation = TranslationAfterScalingAfterRotation3D(translation, scaling, rotation)
-    val alignedMesh = mesh.transform(transformation)
+val translation = Translation3D(EuclideanVector3D(origin.x, origin.y, origin.z))
+val rotation = Rotation3D(phi = 0, theta = 0, psi = 0, center = Point3D(0, 0, 0))
+val scaling = Scaling3D(1.0)
+val transformation = TranslationAfterScalingAfterRotation3D(translation, scaling, rotation)
+val alignedMesh = mesh.transform(transformation)
 ```
 
 If the meshes have a major directional axis, then the PCA alignment could be useful. Note however that the axis directions might be opposites, so you will need to manually go over and rotate the meshes by 180 degrees around some of the axis. For this example, I'll show you a few femur bones where there is a clear major axis direction.
 ```scala
-    def alignmentPrincipalAxises(mesh: TriangleMesh3D): RotationAfterTranslation[_3D] =
-        val N = 1.0 / mesh.pointSet.numberOfPoints
-        val center = (mesh.pointSet.points.map(_.toVector).reduce(_ + _) / mesh.pointSet.numberOfPoints).toPoint
-        val cov = mesh.pointSet.points.foldLeft[SquareMatrix[_3D]](SquareMatrix.zeros)((acc, e) => acc + (e - center).outer(e - center)) * N
-        val SVD(u, _, _) = breeze.linalg.svd(cov.toBreezeMatrix)
-        val translation = Translation3D(center.toVector).inverse
-        val rotation = Rotation3D(SquareMatrix[_3D](u.toArray), Point3D(0, 0, 0)).inverse
-        RotationAfterTranslation(rotation, translation)
+def alignmentPrincipalAxises(mesh: TriangleMesh3D): RotationAfterTranslation[_3D] =
+  val N = 1.0 / mesh.pointSet.numberOfPoints
+  val center = (mesh.pointSet.points.map(_.toVector).reduce(_ + _) / mesh.pointSet.numberOfPoints).toPoint
+  val cov = mesh.pointSet.points.foldLeft[SquareMatrix[_3D]](SquareMatrix.zeros)((acc, e) => acc + (e - center).outer(e - center)) * N
+  val SVD(u, _, _) = breeze.linalg.svd(cov.toBreezeMatrix)
+  val translation = Translation3D(center.toVector).inverse
+  val rotation = Rotation3D(SquareMatrix[_3D](u.toArray), Point3D(0, 0, 0)).inverse
+  RotationAfterTranslation(rotation, translation)
 
-    val translation = Translation3D(EuclideanVector3D(100,100,100))
-    val rotation = Rotation3D(phi = Math.PI/8, theta = Math.PI/4, psi = Math.PI/2, center = Point3D(0, 0, 0))
-    val transformation = TranslationAfterRotation(translation, rotation)
-    val targetMesh = mesh.transform(transformation)
+val translation = Translation3D(EuclideanVector3D(100,100,100))
+val rotation = Rotation3D(phi = Math.PI/8, theta = Math.PI/4, psi = Math.PI/2, center = Point3D(0, 0, 0))
+val transformation = TranslationAfterRotation(translation, rotation)
+val targetMesh = mesh.transform(transformation)
 
-    val transformationPCA = alignmentPrincipalAxises(targetMesh)
-    val orientedMesh = targetMesh.transform(transformationPCA)
+val transformationPCA = alignmentPrincipalAxises(targetMesh)
+val orientedMesh = targetMesh.transform(transformationPCA)
 ```
 
 For the manual annotation, let's start an instance of Scalismo-UI and load a mesh. 
@@ -73,50 +73,50 @@ We first load in the reference landmarks file as these are the ones we would lik
 Then we read in the target mesh and landmark file. We then calculate the transformation using the landmark transformation, apply the transformation to the mesh and the landmarks and save the mesh in a new aligned folder. Of course, feel free to overwrite the original file. Also, a good idea is to visualize the actual aligned mesh output to be sure that all your landmarks were correctly clicked. 
 
 ```scala 
-    val lms = LandmarkIO.readLandmarksJson[_3D](new File(dataDir, "ref_20.json")).get
+val lms = LandmarkIO.readLandmarksJson[_3D](new File(dataDir, "ref_20.json")).get
 
-    val meshFile: File = ???
-    val jsonFile: File = ???
-    val mesh = MeshIO.readMesh(meshFile).get
-    val landmarks = LandmarkIO.readLandmarksJson[_3D](jsonFile).get
-    
-    val transform = LandmarkRegistration.rigid3DLandmarkRegistration(landmarks, lms, Point3D(0,0,0))
-    
-    val alignedMesh = mesh.transform(transform)
-    val alignedLms = landmarks.map(lm => lm.copy(point = transform(lm.point)))
+val meshFile: File = ???
+val jsonFile: File = ???
+val mesh = MeshIO.readMesh(meshFile).get
+val landmarks = LandmarkIO.readLandmarksJson[_3D](jsonFile).get
 
-    MeshIO.writeMesh(alignedMesh, new File("alignedMesh.ply"))
-    LandmarkIO.writeLandmarksJson[_3D](alignedLms, new File("alignedLms.json"))
+val transform = LandmarkRegistration.rigid3DLandmarkRegistration(landmarks, lms, Point3D(0,0,0))
+
+val alignedMesh = mesh.transform(transform)
+val alignedLms = landmarks.map(lm => lm.copy(point = transform(lm.point)))
+
+MeshIO.writeMesh(alignedMesh, new File("alignedMesh.ply"))
+LandmarkIO.writeLandmarksJson[_3D](alignedLms, new File("alignedLms.json"))
 ```
 In the above example, all the landmarks are paired based on their index in the landmark files. If we instead have names of the individual landmarks, we can instead match the names in the two landmark files:
 ```scala 
-    val commonLmNames = landmarks.map(_.id) intersect lms.map(_.id)
-    
-    val landmarksPairs = commonLmNames.map(name => (landmarks.find(_.id == name).get.point, lms.find(_.id == name).get.point))
-    val transform = LandmarkRegistration.rigid3DLandmarkRegistration(landmarksPairs, Point3D(0,0,0))
+val commonLmNames = landmarks.map(_.id) intersect lms.map(_.id)
+
+val landmarksPairs = commonLmNames.map(name => (landmarks.find(_.id == name).get.point, lms.find(_.id == name).get.point))
+val transform = LandmarkRegistration.rigid3DLandmarkRegistration(landmarksPairs, Point3D(0,0,0))
 ```
 
 Finally, let's perform the alignment using automatic ICP alignment. This implementation is also one of the tutorials provided on the Scalismo website [Scalismo Rigid ICP tutorial](https://scalismo.org/docs/Tutorials/tutorial10)
 
 ```scala
 def alignmentRigidICP(reference: TriangleMesh3D, target: TriangleMesh3D, numOfPoints: Int, iterations: Int): TriangleMesh3D = 
-    def attributeCorrespondences(movingMesh: TriangleMesh3D, ptIds : Seq[PointId]) : Seq[(Point3D, Point3D)] = 
-        ptIds.map((id : PointId) =>
-            val pt = movingMesh.pointSet.point(id)
-            val closestPointOnMesh2 = target.pointSet.findClosestPoint(pt).point
-            (pt, closestPointOnMesh2)
-        )
+  def attributeCorrespondences(movingMesh: TriangleMesh3D, ptIds : Seq[PointId]) : Seq[(Point3D, Point3D)] = 
+    ptIds.map((id : PointId) =>
+      val pt = movingMesh.pointSet.point(id)
+      val closestPointOnMesh2 = target.pointSet.findClosestPoint(pt).point
+      (pt, closestPointOnMesh2)
+    )
 
-    def ICPRigidAlign(moving: TriangleMesh3D, ptIds : Seq[PointId], numberOfIterations : Int) : TriangleMesh3D = 
-        if (numberOfIterations == 0) then 
-            moving 
-        else 
-            val correspondences = attributeCorrespondences(moving, ptIds)
-            val transform = LandmarkRegistration.rigid3DLandmarkRegistration(correspondences, center = Point(0, 0, 0))
-            val transformed = moving.transform(transform)
-            ICPRigidAlign(transformed, ptIds, numberOfIterations - 1)
-    val ptIds = (0 until reference.pointSet.numberOfPoints by 50).map(i => PointId(i))
-    ICPRigidAlign(reference, ptIds, iterations)
+  def ICPRigidAlign(moving: TriangleMesh3D, ptIds : Seq[PointId], numberOfIterations : Int) : TriangleMesh3D = 
+    if (numberOfIterations == 0) then 
+      moving 
+    else 
+      val correspondences = attributeCorrespondences(moving, ptIds)
+      val transform = LandmarkRegistration.rigid3DLandmarkRegistration(correspondences, center = Point(0, 0, 0))
+      val transformed = moving.transform(transform)
+      ICPRigidAlign(transformed, ptIds, numberOfIterations - 1)
+  val ptIds = (0 until reference.pointSet.numberOfPoints by 50).map(i => PointId(i))
+  ICPRigidAlign(reference, ptIds, iterations)
 ```
 This method will iteratively estimate the corresponding points between the two meshes, calculate the transformation difference between the meshes and apply the transformation to one of the meshes. This method works well if the orientation of the meshes has already been solved. Often I use this as an additional alignment step after aligning the meshes with a few landmarks. 
 

@@ -1,4 +1,4 @@
-# How to shape model - Part 1 - Introduction
+# How to Shape Model - Part 1 - Introduction
 
 In this series, I’ll show you how to get from a set of 3d meshes to a 3D statistical shape model. So let’s get right into it! 
 
@@ -39,15 +39,15 @@ We will use the newer Scala 3 format and stick to the new Python-like styling wi
 Now, let’s load in the data. The data is stored in a folder in `.PLY` format. We need to specify one of the meshes as the reference mesh. In The one of the next tutorials, I'll will go over good practices of choosing this mesh. For now, a random one can be chosen.
 
 ```scala
-    val dataDir = new File("data/vertebrae/")
-    val dataFolder = new File(dataDir, "registered")
-    val meshes = dataFolder.listFiles().filter(_.getName.endsWith(".ply")).map(MeshIO.readMesh(_).get).toIndexedSeq
-    val ref = meshes.head
+val dataDir = new File("data/vertebrae/")
+val dataFolder = new File(dataDir, "registered")
+val meshes = dataFolder.listFiles().filter(_.getName.endsWith(".ply")).map(MeshIO.readMesh(_).get).toIndexedSeq
+val ref = meshes.head
 
-    val dataCollection = DataCollection.fromTriangleMesh3DSequence(ref, meshes)
-    val ssm = PointDistributionModel.createUsingPCA(dataCollection)
-    val ui = ScalismoUI()
-    ui.show(ssm, "ssm")
+val dataCollection = DataCollection.fromTriangleMesh3DSequence(ref, meshes)
+val ssm = PointDistributionModel.createUsingPCA(dataCollection)
+val ui = ScalismoUI()
+ui.show(ssm, "ssm")
 ```
 
 And that’s basically all there is to it.
@@ -57,10 +57,10 @@ The reason for this is the requirement that these meshes need to be in point cor
 Instead of using the registered folder, let's instead use the aligned folder. And let's also print out the number of vertices in each mesh:
 
 ```scala
-    ... 
-    val dataFolder = new File(dir, "aligned")
-    meshes.foreach(_.pointSet.numberOfPoints)
-    ... 
+... 
+val dataFolder = new File(dir, "aligned")
+meshes.foreach(_.pointSet.numberOfPoints)
+... 
 ```
 
 If we are lucky to compute the model, we will end up with a model, where the deformations make little to no sense.
@@ -71,18 +71,18 @@ By printing out the number of points in each mesh, we clearly see that each mesh
 Let’s have a closer look at our meshes. For this, let’s visualize the same point ID on all the meshes in our dataset. In the dataset that works, we see that the same point ID corresponds to the same anatomical point on all the meshes.
 
 ```scala
-    val dataDir = new File("data/vertebrae/")
-    val dataFolder = new File(dataDir, "aligned")
+val dataDir = new File("data/vertebrae/")
+val dataFolder = new File(dataDir, "aligned")
 
-    val ui = ScalismoUI()
-    val pointId = PointId(1000)
+val ui = ScalismoUI()
+val pointId = PointId(1000)
 
-    dataFolder.listFiles().filter(_.getName.endsWith(".ply")).foreach { f =>
-        val mesh = MeshIO.readMesh(f).get
-        val lm = Seq(Landmark3D(f.getName, mesh.pointSet.point(pointId)))
-        ui.show(mesh, f.getName)    
-        ui.show(lm, "landmarks")    
-    } 
+dataFolder.listFiles().filter(_.getName.endsWith(".ply")).foreach { f =>
+  val mesh = MeshIO.readMesh(f).get
+  val lm = Seq(Landmark3D(f.getName, mesh.pointSet.point(pointId)))
+  ui.show(mesh, f.getName)    
+  ui.show(lm, "landmarks")    
+} 
 ```
 
 If we do the same for the `aligned` meshes, we see that this isn’t the case.

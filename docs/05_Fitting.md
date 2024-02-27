@@ -1,4 +1,4 @@
-# How to shape model - Part 5 - Model fitting (non-rigid registration)
+# How to Shape Model - Part 5 - Model fitting (non-rigid registration)
 
 In this tutorial, I'll show you how to use the deformable model that we created to establish correspondence between meshes. 
 <!-- VIDEO OF Non-rigid registration -->
@@ -10,27 +10,27 @@ In this tutorial, we'll first manually code up a model fitting function to under
 
 At first, let's load in a model and a target mesh. Before doing so, be sure to have executed steps 1 and 2 in the `src/prepare_data` folder as this will first align all our target data and create the model to use.
 ```scala
-    val dataDir = new File("data/vertebrae/")
-    val gpmmFile = new File(dataDir, "gpmm.h5.json")
-    val lmsFile = new File(dataDir, "ref_20.json")
-    val gpmm = StatisticalModelIO.readStatisticalTriangleMeshModel3D(gpmmFile).get
-    val lms = LandmarkIO.readLandmarksJson[_3D](lmsFile).get
+val dataDir = new File("data/vertebrae/")
+val gpmmFile = new File(dataDir, "gpmm.h5.json")
+val lmsFile = new File(dataDir, "ref_20.json")
+val gpmm = StatisticalModelIO.readStatisticalTriangleMeshModel3D(gpmmFile).get
+val lms = LandmarkIO.readLandmarksJson[_3D](lmsFile).get
 
-    val targetMesh = MeshIO.readMesh(new File(dataDir, "aligned/sub-verse010_segment_20.ply")).get
-    val targetLms = LandmarkIO.readLandmarksJson[_3D](new File(dataDir, "aligned/sub-verse010_segment_20.json")).get
+val targetMesh = MeshIO.readMesh(new File(dataDir, "aligned/sub-verse010_segment_20.ply")).get
+val targetLms = LandmarkIO.readLandmarksJson[_3D](new File(dataDir, "aligned/sub-verse010_segment_20.json")).get
 
-    val ui = ScalismoUI()
-    val modelGroup = ui.createGroup("modelGroup")
-    val targetGroup = ui.createGroup("targetGroup")
-    ui.show(modelGroup, gpmm, "gpmm")
-    ui.show(targetGroup, targetMesh, "target")
+val ui = ScalismoUI()
+val modelGroup = ui.createGroup("modelGroup")
+val targetGroup = ui.createGroup("targetGroup")
+ui.show(modelGroup, gpmm, "gpmm")
+ui.show(targetGroup, targetMesh, "target")
 ```
 Since the target data in this example is very noisy, our goal is not to do a perfect fit, but instead to capture the overall size of the target data.
 Since we have landmark points available both for the model and the target mesh, we can start out trying to "fit" our model to these landmark points.
 ```scala
-    val lmsData = lms.zip(targetLms).map{ case(lm1, lm2) => (gpmm.reference.pointSet.findClosestPoint(lm1.point).id, lm2.point)}.toIndexedSeq
-    val lmPosterior = gpmm.posterior(lmsData, 1.0)
-    val lmFit = lmPosterior.mean
+val lmsData = lms.zip(targetLms).map{ case(lm1, lm2) => (gpmm.reference.pointSet.findClosestPoint(lm1.point).id, lm2.point)}.toIndexedSeq
+val lmPosterior = gpmm.posterior(lmsData, 1.0)
+val lmFit = lmPosterior.mean
 ```
 For some applications, this might be good enough. We can even continue adding landmarks to get the surfaces closer and closer together. You might also want to play around with the uncertainty value when calculating the posterior, this value should be seen as the uncertainty of the landmark observation. 
 
@@ -40,27 +40,27 @@ To begin with, I will just show you a very simple implementation method that has
 
 ```scala
 def nonrigidICP(model: PointDistributionModel[_3D, TriangleMesh], targetMesh: TriangleMesh3D, numOfSamplePoints: Int, numOfIterations: Int) : TriangleMesh3D = 
-    val numOfPoints = model.reference.pointSet.numberOfPoints
-    val ptIds = (0 until numOfPoints by (numOfPoints / numOfIterations)).map(i => PointId(i))
+  val numOfPoints = model.reference.pointSet.numberOfPoints
+  val ptIds = (0 until numOfPoints by (numOfPoints / numOfIterations)).map(i => PointId(i))
     
-    def attributeCorrespondences(movingMesh: TriangleMesh3D) : IndexedSeq[(PointId, Point[_3D])] = 
-        ptIds.map( (id : PointId) =>
-            val pt = movingMesh.pointSet.point(id)
-            val closestPointOnMesh2 = targetMesh.pointSet.findClosestPoint(pt).point
-            (id, closestPointOnMesh2)
-            )
+  def attributeCorrespondences(movingMesh: TriangleMesh3D) : IndexedSeq[(PointId, Point[_3D])] = 
+    ptIds.map( (id : PointId) =>
+      val pt = movingMesh.pointSet.point(id)
+      val closestPointOnMesh2 = targetMesh.pointSet.findClosestPoint(pt).point
+      (id, closestPointOnMesh2)
+    )
 
-    def fitting(movingMesh: TriangleMesh3D, iteration: Int, uncertainty: Double): TriangleMesh3D =
-        println(s"iteration: $iteration")
-        if (iteration == 0) then
-            movingMesh 
-        else 
-            val correspondences = attributeCorrespondences(movingMesh)
-            val posterior = model.posterior(correspondences, uncertainty)
-            posterior.mean
-            fitting(posterior.mean, iteration - 1, uncertainty)
-        
-    fitting(model.reference, numOfIterations, 1.0)
+  def fitting(movingMesh: TriangleMesh3D, iteration: Int, uncertainty: Double): TriangleMesh3D =
+    println(s"iteration: $iteration")
+    if (iteration == 0) then
+      movingMesh 
+    else 
+      val correspondences = attributeCorrespondences(movingMesh)
+      val posterior = model.posterior(correspondences, uncertainty)
+      posterior.mean
+      fitting(posterior.mean, iteration - 1, uncertainty)
+    
+  fitting(model.reference, numOfIterations, 1.0)
 ```
 
 A ton of configuration possibilities exist for the ICP algorithm, for instance how the closest points are taken, which is calculated in the `attributeCorrespondence` function. This could be either the closest Euclidean point on a target surface, the closest vertex on the target surface (as done), closest point along the surface normal, we could also estimate the closest points from the target to the model instead, and many more methods exist to make it more robust. The same goes for the `uncertainty` value, which can either be manually set for all correspondent pairs or we can come up with a way to calculate the uncertainty based on the distance between the model surface and the target surface for each point. In the example, the uncertainty is a standard multivariate normal distribution, but we could also provide different uncertainty in different directions. 
@@ -68,19 +68,19 @@ A ton of configuration possibilities exist for the ICP algorithm, for instance h
 When running the fitting, we can either make use of the original model `gpmm` or we can use the model that is conditioned on the landmark observations. 
 
 ```scala
-    // Use posterior/conditioned model from landmarks
-    val icpFit = nonrigidICP(lmPosterior, targetMesh, 100, 50)
-    // Use complete initial model
-    val icpFit = nonrigidICP(gpmm, targetMesh, 100, 50)
+// Use posterior/conditioned model from landmarks
+val icpFit = nonrigidICP(lmPosterior, targetMesh, 100, 50)
+// Use complete initial model
+val icpFit = nonrigidICP(gpmm, targetMesh, 100, 50)
 ```
 To evaluate the fit to the target, some common metrics to use are the average distance and Hausdorff distance. These can be used to quickly get an idea about the quality of the fit.
 ```scala
 def evaluate(mesh1: TriangleMesh3D, mesh2: TriangleMesh3D, description: String): Unit =
-    val avg1 = MeshMetrics.avgDistance(mesh1, mesh2)
-    val avg2 = MeshMetrics.avgDistance(mesh2, mesh1)
-    val hausdorff1 = MeshMetrics.hausdorffDistance(mesh1, mesh2)
-    val hausdorff2 = MeshMetrics.hausdorffDistance(mesh2, mesh1)
-    println(s"$description - avg1: $avg1, avg2: $avg2, hausdorff1: $hausdorff1, hausdorff2: $hausdorff2")
+  val avg1 = MeshMetrics.avgDistance(mesh1, mesh2)
+  val avg2 = MeshMetrics.avgDistance(mesh2, mesh1)
+  val hausdorff1 = MeshMetrics.hausdorffDistance(mesh1, mesh2)
+  val hausdorff2 = MeshMetrics.hausdorffDistance(mesh2, mesh1)
+  println(s"$description - avg1: $avg1, avg2: $avg2, hausdorff1: $hausdorff1, hausdorff2: $hausdorff2")
 
 evaluate(targetMesh, lmFit, "lmFit")
 evaluate(targetMesh, icpFit, "icpFit")
@@ -106,9 +106,9 @@ But let's try to run the examples from the GiNGR repository, to get a feeling fo
 
 The average distance and max distances after each step:
 ```scala
-    STEP 1 - average2surface: 1.76 max: 9.31
-    STEP 2 - average2surface: 0.57 max: 5.92
-    STEP 3 - average2surface: 0.21 max: 5.25
+  STEP 1 - average2surface: 1.76 max: 9.31
+  STEP 2 - average2surface: 0.57 max: 5.92
+  STEP 3 - average2surface: 0.21 max: 5.25
 ```
 ![Bunny multi-resolution fitting](/img/fitting_bunny.gif)
 

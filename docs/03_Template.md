@@ -1,4 +1,4 @@
-# How to shape model - Part 2 - Template design
+# How to Shape Model - Part 2 - Template design
 
 In this tutorial, I'll show you how to design the reference shape of your shape model. We'll go from this noisy segmented mesh
 ![Vertebrae noisy segmented!](/img/vertebrae/verse024.png) 
