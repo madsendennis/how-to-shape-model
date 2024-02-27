@@ -49,9 +49,9 @@ Let’s try out different decimation levels in Slicer and see what it looks like
 
 The same decimation algorithm is also available directly in Scalismo, so use it there you can simply load in the mesh, perform the decimation operation and save the mesh again. Like this, you can even have different coarseness levels of your reference mesh available
 ```scala
-    val mesh = MeshIO.readMesh(new File("mesh.ply")).get
-    val decimated = mesh.operations.decimate(1000)
-    MeshIO.writeMesh(decimated, new File("decimated.ply"))
+val mesh = MeshIO.readMesh(new File("mesh.ply")).get
+val decimated = mesh.operations.decimate(1000)
+MeshIO.writeMesh(decimated, new File("decimated.ply"))
 ```
 
 That’s all there is to it. Some simple steps that will save you hours if not days of work down the line.
