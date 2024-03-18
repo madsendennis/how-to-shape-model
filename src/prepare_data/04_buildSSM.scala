@@ -20,7 +20,8 @@ import scalismo.utils.Random.implicits._
   val ssmFile = new File(dataDir, "pca.h5.json")
 
   val dataCollection = DataCollection.fromTriangleMesh3DSequence(ref, meshes)
-  val ssm = PointDistributionModel.createUsingPCA(dataCollection)
+  val dataCollectionAligned = DataCollection.gpa(dataCollection)
+  val ssm = PointDistributionModel.createUsingPCA(dataCollectionAligned)
   StatisticalModelIO.writeStatisticalTriangleMeshModel3D(ssm, ssmFile)
 
   val ui = ScalismoUI()
