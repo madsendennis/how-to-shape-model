@@ -1,4 +1,4 @@
-import scalismo.common.interpolation.TriangleMeshInterpolator3D
+import scalismo.common.interpolation.NearestNeighborInterpolator3D
 import scalismo.geometry.EuclideanVector
 import scalismo.geometry._3D
 import scalismo.io.MeshIO
@@ -27,7 +27,7 @@ def createModel(
     ref,
     gp,
     relativeTolerance,
-    interpolator = TriangleMeshInterpolator3D()
+    interpolator = NearestNeighborInterpolator3D()
   )
   val gpmm = PointDistributionModel3D(ref, lrGP)
   gpmm
