@@ -1,10 +1,11 @@
-import scalismo.ui.api.ScalismoUI
 import scalismo.io.MeshIO
-import java.io.File
 import scalismo.io.StatisticalModelIO
 import scalismo.statisticalmodel.PointDistributionModel
 import scalismo.statisticalmodel.dataset.DataCollection
+import scalismo.ui.api.ScalismoUI
 import scalismo.utils.Random.implicits._
+
+import java.io.File
 
 @main def buildSSM() =
   println("Build Statistical shape model / GPMM with a PCA kernel")

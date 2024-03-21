@@ -1,10 +1,10 @@
-import scalismo.ui.api.ScalismoUI
-import scalismo.io.MeshIO
-import java.io.File
-import scalismo.io.LandmarkIO
-import scalismo.geometry._3D
-import scalismo.registration.LandmarkRegistration
 import scalismo.geometry.Point3D
+import scalismo.geometry._3D
+import scalismo.io.LandmarkIO
+import scalismo.io.MeshIO
+import scalismo.registration.LandmarkRegistration
+
+import java.io.File
 
 @main def alignMeshes() =
   println("Aligning meshes and landmarks")

@@ -1,30 +1,23 @@
-import scalismo.ui.api.ScalismoUI
-import scalismo.io.MeshIO
-import java.io.File
-import scalismo.io.LandmarkIO
+import scalismo.common.interpolation.TriangleMeshInterpolator3D
+import scalismo.geometry.EuclideanVector
 import scalismo.geometry._3D
-import scalismo.registration.LandmarkRegistration
-import scalismo.geometry.Point3D
-import scalismo.statisticalmodel.PointDistributionModel3D
+import scalismo.io.MeshIO
+import scalismo.io.StatisticalModelIO
 import scalismo.kernels.DiagonalKernel3D
 import scalismo.kernels.GaussianKernel3D
 import scalismo.mesh.TriangleMesh
-import scalismo.statisticalmodel.LowRankGaussianProcess
-import scalismo.common.interpolation.TriangleMeshInterpolator3D
 import scalismo.statisticalmodel.GaussianProcess3D
-import scalismo.geometry.EuclideanVector3D
-import scalismo.common.Field
-import scalismo.common.EuclideanSpace3D
-import scalismo.geometry.Point
-import scalismo.geometry.EuclideanVector
-import scalismo.common.interpolation.NearestNeighborInterpolator3D
-import scalismo.io.StatisticalModelIO
+import scalismo.statisticalmodel.LowRankGaussianProcess
 import scalismo.statisticalmodel.PointDistributionModel
+import scalismo.statisticalmodel.PointDistributionModel3D
+import scalismo.ui.api.ScalismoUI
+
+import java.io.File
 
 def createModel(
     ref: TriangleMesh[_3D]
 ): PointDistributionModel[_3D, TriangleMesh] =
-  val scaling = 50.0
+  val scaling = 10.0
   val sigma = 35.0
   val relativeTolerance = 0.01
 
@@ -34,7 +27,7 @@ def createModel(
     ref,
     gp,
     relativeTolerance,
-    interpolator = NearestNeighborInterpolator3D()
+    interpolator = TriangleMeshInterpolator3D()
   )
   val gpmm = PointDistributionModel3D(ref, lrGP)
   gpmm

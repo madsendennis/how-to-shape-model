@@ -1,18 +1,14 @@
-import scalismo.ui.api.ScalismoUI
-import scalismo.io.MeshIO
-import java.io.File
-import scalismo.io.LandmarkIO
-import scalismo.geometry._3D
-import scalismo.registration.LandmarkRegistration
-import scalismo.geometry.Point3D
-import scalismo.io.StatisticalModelIO
-import gingr.simple.GingrInterface
-import gingr.api.registration.config.CpdConfiguration
-import scalismo.utils.Random.implicits._
 import gingr.api.RigidTransforms
-import gingr.api.registration.config.IcpConfiguration
-import gingr.api.NoTransforms
-import gingr.api.registration.config.AlongNormalClosestPoint
+import gingr.api.registration.config.CpdConfiguration
+import gingr.simple.GingrInterface
+import scalismo.geometry._3D
+import scalismo.io.LandmarkIO
+import scalismo.io.MeshIO
+import scalismo.io.StatisticalModelIO
+import scalismo.ui.api.ScalismoUI
+import scalismo.utils.Random.implicits._
+
+import java.io.File
 
 @main def registerMeshes() =
   println("register meshes / establish point-to-point correspondences")
@@ -36,10 +32,6 @@ import gingr.api.registration.config.AlongNormalClosestPoint
       val jsonFile = new File(f.getAbsolutePath.replace(".ply", ".json"))
       val landmarks = LandmarkIO.readLandmarksJson[_3D](jsonFile).get
 
-      val ui = ScalismoUI("MultiResolution")
-      ui.show(target, "target")
-      ui.show(gpmm.mean, "model mean")
-
       val gingrInterface = GingrInterface(
         gpmm,
         target,
@@ -55,10 +47,14 @@ import gingr.api.registration.config.AlongNormalClosestPoint
         globalTransformation = RigidTransforms
       )
       fit.general.printStatus()
-      ui.show(fit.general.fit, "fit")
 
       MeshIO.writeMesh(
         fit.general.fit,
         new File(registeredDataFolder, f.getName)
       )
+      // Optionally, visualize the results
+      // val ui = ScalismoUI("MultiResolution")
+      // ui.show(target, "target")
+      // ui.show(gpmm.mean, "model mean")
+      // ui.show(fit.general.fit, "fit")
     }
