@@ -8,25 +8,25 @@ In the video series, I go over all the practical design decisions when creating 
 Links to blog posts and videos of each tutorial
 1. **Introduction/Overview and Point-correspondence**
    * [Blog post](https://dennismadsen.me/posts/how-to-shape-model-part1/)
-   * Video coming <!-- * [Video]() -->
+   * [Video](https://www.youtube.com/watch?v=D4W2sotakYk)
 2. **Rigid Alignment**
    * [Blog post](https://dennismadsen.me/posts/how-to-shape-model-part2/)
-   * Video coming <!-- * [Video]() -->
+   * [Video](https://www.youtube.com/watch?v=FiC0lVt-noQ)
 3. **Template design**
    * [Blog post](https://dennismadsen.me/posts/how-to-shape-model-part3/)
-   * Video coming <!-- * [Video]() -->
+   * [Video](https://www.youtube.com/watch?v=AO2UH4Xji60)
 4. **Deformable template / Kernel design**
    * [Blog post](https://dennismadsen.me/posts/how-to-shape-model-part4/)
-   * Video coming <!-- * [Video]() -->
+   * [Video](https://www.youtube.com/watch?v=sOsaoDUIh94)
 5. **Non-rigid registration/fitting**
    * [Blog post](https://dennismadsen.me/posts/how-to-shape-model-part5/)
-   * Video coming <!-- * [Video]() -->
+   * [Video](https://www.youtube.com/watch?v=4ELS5ZYm7eo)
 6. **Model evaluation**
    * [Blog post](https://dennismadsen.me/posts/how-to-shape-model-part6/)
-   * Video coming <!-- * [Video]() -->
+   * [Video](https://www.youtube.com/watch?v=V81OuoHDRkk)
 7. **Model visualization**
    * [Blog post](https://dennismadsen.me/posts/how-to-shape-model-part7/)
-   * Video coming <!-- * [Video]() -->
+   * [Video](https://www.youtube.com/watch?v=ROSB3q82gsg)
 
 The accompanying code can be found in the source folder. To generate all the output files as shown in the videos, execute each of the `scala` scripts in order.
   
